@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Feedback Dashboard</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; }
+    h1 { text-align: center; color: #333; }
+    
+    /* Grid Layout for cards */
+    #feedback-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Card Styling */
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-left: 5px solid #007bff; /* Blue accent */
+    }
+
+    .card h3 { margin-top: 0; color: #444; }
+    .stars { color: #f39c12; font-size: 1.2rem; }
+    .msg { color: #555; font-style: italic; margin: 15px 0; }
+    .time { font-size: 0.8rem; color: #999; text-align: right; }
+  </style>
+</head>
+<body>
+
+  <h1>Admin Feedback Dashboard</h1>
+  <div id="feedback-container">
+    <p style="text-align:center; width:100%;">Loading data...</p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDv2IZjs4dyC4w2Tne4jqFVCyHN-J6oFF0",
+      authDomain: "t-stephen-ai-portfolio.firebaseapp.com",
+      databaseURL: "https://t-stephen-ai-portfolio-default-rtdb.firebaseio.com",
+      projectId: "t-stephen-ai-portfolio",
+      storageBucket: "t-stephen-ai-portfolio.appspot.com",
+      messagingSenderId: "493827826934",
+      appId: "1:493827826934:web:0f0e3a03fe56c25c5338d7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const container = document.getElementById('feedback-container');
+
+    const ratingsRef = ref(db, 'ratings');
+    onValue(ratingsRef, (snapshot) => {
+      const data = snapshot.val();
+      container.innerHTML = ''; // Clear loading text
+
+      if (!data) {
+        container.innerHTML = '<p>No feedback received yet.</p>';
+        return;
+      }
+
+      // Convert object to array to sort nicely (optional)
+      const entries = Object.values(data).reverse(); // Show newest first if using push()
+
+      entries.forEach(entry => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        
+        // Generate Star String
+        const starString = '⭐'.repeat(entry.rating);
+        
+        // Handle timestamp if it exists, otherwise show 'Unknown date'
+        const dateStr = entry.timestamp ? new Date(entry.timestamp).toLocaleString() : '';
+
+        card.innerHTML = `
+          <h3>${entry.name || 'Anonymous'}</h3>
+          <div class="stars">${starString}</div>
+          <p class="msg">"${entry.message}"</p>
+          <div class="time">${dateStr}</div>
+        `;
+        
+        container.appendChild(card);
+      });
+    });
+  </script>
+</body>
+</html>
