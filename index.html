@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta name="google-site-verification" content="M7eYtf6KyqldFYelX_o_X_M_G_EXAMPLE" /> 
   <title>Admin Feedback Dashboard</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; padding: 20px; }
@@ -67,17 +68,13 @@
         return;
       }
 
-      // Convert object to array to sort nicely (optional)
-      const entries = Object.values(data).reverse(); // Show newest first if using push()
+      const entries = Object.values(data).reverse(); 
 
       entries.forEach(entry => {
         const card = document.createElement('div');
         card.className = 'card';
         
-        // Generate Star String
         const starString = '⭐'.repeat(entry.rating);
-        
-        // Handle timestamp if it exists, otherwise show 'Unknown date'
         const dateStr = entry.timestamp ? new Date(entry.timestamp).toLocaleString() : '';
 
         card.innerHTML = `
